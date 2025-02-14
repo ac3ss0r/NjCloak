@@ -11,13 +11,13 @@ Allows to block your screen from capture by any apps. Any remote administration 
 
 
 <div align=center>
-    <img width="80%" src="https://i.ibb.co/qYfyMCPQ/screen-default.png"><br/>
+    <img width="80%" src="images/screen-default.png"><br/>
     <text>Screen blocker disabled</text>
 </div>
 <br/>
 
 <div align=center>
-    <img width="80%" src="https://i.ibb.co/21RdXgtH/screen-blocker.png"><br/>
+    <img width="80%" src="images/screen-blocker.png"><br/>
     <text>Screen blocker enabled</text>
 </div>
 <br/>
@@ -26,7 +26,7 @@ Allows to block your screen from capture by any apps. Any remote administration 
 Deny network access for all software except for whitelisted ones.
 
 <div align=center>
-    <img width="80%" src="https://i.ibb.co/qLyS3cfQ/firewall.png"><br/>
+    <img width="80%" src="images/firewall.png"><br/>
 </div>
 <br/>
 
@@ -35,7 +35,7 @@ Deny network access for all software except for whitelisted ones.
 Helps to detect crypto clippers automatically by copying wallet addresses and checking if they changed.
 
 <div align=center>
-    <img width="80%" src="https://i.ibb.co/MxrmjRGd/clipper-detector.png"><br/>
+    <img width="80%" src="images/clipper-detector.png"><br/>
 </div>
 <br/>
 
