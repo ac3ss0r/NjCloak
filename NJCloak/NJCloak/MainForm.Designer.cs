@@ -51,7 +51,7 @@ namespace NJCloak {
             this.clipperDetectorTimer = new System.Windows.Forms.Timer(this.components);
             this.aboutTab = new System.Windows.Forms.Panel();
             this.label6 = new System.Windows.Forms.Label();
-            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
+            this.creditsLabel = new System.Windows.Forms.LinkLabel();
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
@@ -165,6 +165,7 @@ namespace NJCloak {
             this.screenBlockerTab.Controls.Add(this.cloakButton);
             this.screenBlockerTab.Dock = System.Windows.Forms.DockStyle.Fill;
             this.screenBlockerTab.Location = new System.Drawing.Point(0, 0);
+            this.screenBlockerTab.MinimumSize = new System.Drawing.Size(601, 235);
             this.screenBlockerTab.Name = "screenBlockerTab";
             this.screenBlockerTab.Size = new System.Drawing.Size(601, 235);
             this.screenBlockerTab.TabIndex = 4;
@@ -182,6 +183,7 @@ namespace NJCloak {
             // 
             // firewallTab
             // 
+            this.firewallTab.AllowDrop = true;
             this.firewallTab.Controls.Add(this.firewallSelectButton);
             this.firewallTab.Controls.Add(this.firewallStatusLabel);
             this.firewallTab.Controls.Add(this.blockAllButton);
@@ -195,97 +197,115 @@ namespace NJCloak {
             this.firewallTab.Name = "firewallTab";
             this.firewallTab.Size = new System.Drawing.Size(601, 235);
             this.firewallTab.TabIndex = 5;
+            this.firewallTab.DragDrop += new System.Windows.Forms.DragEventHandler(this.firewallTab_DragDrop);
+            this.firewallTab.DragEnter += new System.Windows.Forms.DragEventHandler(this.On_DragEnter);
             // 
             // firewallSelectButton
             // 
-            this.firewallSelectButton.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.firewallSelectButton.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.firewallSelectButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.firewallSelectButton.Location = new System.Drawing.Point(409, 97);
+            this.firewallSelectButton.Location = new System.Drawing.Point(531, 91);
             this.firewallSelectButton.Name = "firewallSelectButton";
             this.firewallSelectButton.Size = new System.Drawing.Size(61, 23);
             this.firewallSelectButton.TabIndex = 14;
             this.firewallSelectButton.Text = "Select";
             this.firewallSelectButton.UseVisualStyleBackColor = true;
             this.firewallSelectButton.Click += new System.EventHandler(this.firewallSelectButton_Click);
+            this.firewallSelectButton.DragDrop += new System.Windows.Forms.DragEventHandler(this.firewallTab_DragDrop);
+            this.firewallSelectButton.DragEnter += new System.Windows.Forms.DragEventHandler(this.On_DragEnter);
             // 
             // firewallStatusLabel
             // 
             this.firewallStatusLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.firewallStatusLabel.BackColor = System.Drawing.Color.Black;
-            this.firewallStatusLabel.Location = new System.Drawing.Point(12, 152);
+            this.firewallStatusLabel.Location = new System.Drawing.Point(18, 150);
             this.firewallStatusLabel.Name = "firewallStatusLabel";
-            this.firewallStatusLabel.Size = new System.Drawing.Size(577, 14);
+            this.firewallStatusLabel.Size = new System.Drawing.Size(574, 14);
             this.firewallStatusLabel.TabIndex = 13;
             this.firewallStatusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.firewallStatusLabel.DragDrop += new System.Windows.Forms.DragEventHandler(this.firewallTab_DragDrop);
+            this.firewallStatusLabel.DragEnter += new System.Windows.Forms.DragEventHandler(this.On_DragEnter);
             // 
             // blockAllButton
             // 
             this.blockAllButton.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.blockAllButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.blockAllButton.Location = new System.Drawing.Point(305, 53);
+            this.blockAllButton.Location = new System.Drawing.Point(300, 53);
             this.blockAllButton.Name = "blockAllButton";
-            this.blockAllButton.Size = new System.Drawing.Size(151, 38);
+            this.blockAllButton.Size = new System.Drawing.Size(131, 32);
             this.blockAllButton.TabIndex = 12;
             this.blockAllButton.Text = "Block all (whitelist)";
             this.blockAllButton.UseVisualStyleBackColor = true;
             this.blockAllButton.Click += new System.EventHandler(this.blockAllButton_Click);
+            this.blockAllButton.DragDrop += new System.Windows.Forms.DragEventHandler(this.firewallTab_DragDrop);
+            this.blockAllButton.DragEnter += new System.Windows.Forms.DragEventHandler(this.On_DragEnter);
             // 
             // resetFirewall
             // 
             this.resetFirewall.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.resetFirewall.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.resetFirewall.Location = new System.Drawing.Point(152, 53);
+            this.resetFirewall.Location = new System.Drawing.Point(182, 53);
             this.resetFirewall.Name = "resetFirewall";
-            this.resetFirewall.Size = new System.Drawing.Size(147, 38);
+            this.resetFirewall.Size = new System.Drawing.Size(112, 32);
             this.resetFirewall.TabIndex = 11;
             this.resetFirewall.Text = "Reset firewall";
             this.resetFirewall.UseVisualStyleBackColor = true;
             this.resetFirewall.Click += new System.EventHandler(this.resetFirewall_Click);
+            this.resetFirewall.DragDrop += new System.Windows.Forms.DragEventHandler(this.firewallTab_DragDrop);
+            this.resetFirewall.DragEnter += new System.Windows.Forms.DragEventHandler(this.On_DragEnter);
             // 
             // whitelistRemoveButton
             // 
             this.whitelistRemoveButton.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.whitelistRemoveButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.whitelistRemoveButton.Location = new System.Drawing.Point(305, 126);
+            this.whitelistRemoveButton.Location = new System.Drawing.Point(300, 120);
             this.whitelistRemoveButton.Name = "whitelistRemoveButton";
             this.whitelistRemoveButton.Size = new System.Drawing.Size(81, 23);
             this.whitelistRemoveButton.TabIndex = 10;
             this.whitelistRemoveButton.Text = "Remove";
             this.whitelistRemoveButton.UseVisualStyleBackColor = true;
             this.whitelistRemoveButton.Click += new System.EventHandler(this.whitelistRemoveButton_Click);
+            this.whitelistRemoveButton.DragDrop += new System.Windows.Forms.DragEventHandler(this.firewallTab_DragDrop);
+            this.whitelistRemoveButton.DragEnter += new System.Windows.Forms.DragEventHandler(this.On_DragEnter);
             // 
             // whitelistAddButton
             // 
             this.whitelistAddButton.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.whitelistAddButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.whitelistAddButton.Location = new System.Drawing.Point(221, 126);
+            this.whitelistAddButton.Location = new System.Drawing.Point(216, 120);
             this.whitelistAddButton.Name = "whitelistAddButton";
             this.whitelistAddButton.Size = new System.Drawing.Size(78, 23);
             this.whitelistAddButton.TabIndex = 9;
             this.whitelistAddButton.Text = "Add";
             this.whitelistAddButton.UseVisualStyleBackColor = true;
             this.whitelistAddButton.Click += new System.EventHandler(this.whitelistAddButton_Click);
+            this.whitelistAddButton.DragDrop += new System.Windows.Forms.DragEventHandler(this.firewallTab_DragDrop);
+            this.whitelistAddButton.DragEnter += new System.Windows.Forms.DragEventHandler(this.On_DragEnter);
             // 
             // whitelistAppPath
             // 
-            this.whitelistAppPath.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.whitelistAppPath.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.whitelistAppPath.BackColor = System.Drawing.Color.Black;
             this.whitelistAppPath.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.whitelistAppPath.ForeColor = System.Drawing.Color.LightGray;
-            this.whitelistAppPath.Location = new System.Drawing.Point(223, 99);
+            this.whitelistAppPath.Location = new System.Drawing.Point(102, 93);
             this.whitelistAppPath.Name = "whitelistAppPath";
-            this.whitelistAppPath.Size = new System.Drawing.Size(180, 21);
+            this.whitelistAppPath.Size = new System.Drawing.Size(423, 21);
             this.whitelistAppPath.TabIndex = 8;
+            this.whitelistAppPath.DragDrop += new System.Windows.Forms.DragEventHandler(this.firewallTab_DragDrop);
+            this.whitelistAppPath.DragEnter += new System.Windows.Forms.DragEventHandler(this.On_DragEnter);
             // 
             // label2
             // 
-            this.label2.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.label2.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(136, 101);
+            this.label2.Location = new System.Drawing.Point(15, 95);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(81, 15);
             this.label2.TabIndex = 6;
             this.label2.Text = "Whitelist app";
+            this.label2.DragDrop += new System.Windows.Forms.DragEventHandler(this.firewallTab_DragDrop);
+            this.label2.DragEnter += new System.Windows.Forms.DragEventHandler(this.On_DragEnter);
             // 
             // clipperDetectorTab
             // 
@@ -341,7 +361,7 @@ namespace NJCloak {
             // aboutTab
             // 
             this.aboutTab.Controls.Add(this.label6);
-            this.aboutTab.Controls.Add(this.linkLabel1);
+            this.aboutTab.Controls.Add(this.creditsLabel);
             this.aboutTab.Controls.Add(this.label5);
             this.aboutTab.Controls.Add(this.label4);
             this.aboutTab.Controls.Add(this.pictureBox1);
@@ -354,25 +374,29 @@ namespace NJCloak {
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(138, 47);
+            this.label6.BackColor = System.Drawing.Color.Transparent;
+            this.label6.Location = new System.Drawing.Point(131, 46);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(87, 15);
             this.label6.TabIndex = 4;
             this.label6.Text = "for public use.";
             // 
-            // linkLabel1
+            // creditsLabel
             // 
-            this.linkLabel1.AutoSize = true;
-            this.linkLabel1.Location = new System.Drawing.Point(84, 47);
-            this.linkLabel1.Name = "linkLabel1";
-            this.linkLabel1.Size = new System.Drawing.Size(55, 15);
-            this.linkLabel1.TabIndex = 3;
-            this.linkLabel1.TabStop = true;
-            this.linkLabel1.Text = "Acessor";
+            this.creditsLabel.AutoSize = true;
+            this.creditsLabel.BackColor = System.Drawing.Color.Transparent;
+            this.creditsLabel.Location = new System.Drawing.Point(77, 46);
+            this.creditsLabel.Name = "creditsLabel";
+            this.creditsLabel.Size = new System.Drawing.Size(55, 15);
+            this.creditsLabel.TabIndex = 3;
+            this.creditsLabel.TabStop = true;
+            this.creditsLabel.Text = "Acessor";
+            this.creditsLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.creditsLabel_LinkClicked);
             // 
             // label5
             // 
             this.label5.AutoSize = true;
+            this.label5.BackColor = System.Drawing.Color.Transparent;
             this.label5.Location = new System.Drawing.Point(12, 47);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(71, 15);
@@ -383,6 +407,7 @@ namespace NJCloak {
             // 
             this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.label4.BackColor = System.Drawing.Color.Transparent;
             this.label4.Location = new System.Drawing.Point(12, 12);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(577, 35);
@@ -408,6 +433,7 @@ namespace NJCloak {
             // windowCleanerTimer
             // 
             this.windowCleanerTimer.Interval = 500;
+            this.windowCleanerTimer.Tick += new System.EventHandler(this.windowCleanerTimer_Tick);
             // 
             // MainForm
             // 
@@ -416,10 +442,10 @@ namespace NJCloak {
             this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(601, 235);
             this.Controls.Add(this.BottomMenu);
+            this.Controls.Add(this.screenBlockerTab);
             this.Controls.Add(this.firewallTab);
             this.Controls.Add(this.clipperDetectorTab);
             this.Controls.Add(this.aboutTab);
-            this.Controls.Add(this.screenBlockerTab);
             this.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.ForeColor = System.Drawing.Color.LightGray;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -466,7 +492,7 @@ namespace NJCloak {
         private System.Windows.Forms.Panel aboutTab;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.LinkLabel linkLabel1;
+        private System.Windows.Forms.LinkLabel creditsLabel;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label firewallStatusLabel;

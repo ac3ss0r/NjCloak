@@ -52,14 +52,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Cleaner.cs" />
+    <Compile Include="Modules\WindowCleaner.cs" />
     <Compile Include="CloakForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="CloakForm.Designer.cs">
       <DependentUpon>CloakForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Firewall.cs" />
+    <Compile Include="Modules\Firewall.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>

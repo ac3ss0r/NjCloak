@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Threading;
@@ -47,12 +48,16 @@ namespace NJCloak {
         // Screen blocker
 
         private void cloakButton_Click(object sender, EventArgs e) {
-            cloakButton.Text = ScreenBlocker.Visible ? "Start blocking" : "Stop blocking";
+            cloakButton.Text = ScreenBlocker.Visible ? "Start blocking" : 
+                                                       "Stop blocking";
             ScreenBlocker.Visible = !ScreenBlocker.Visible;
+            windowCleanerTimer.Enabled = !windowCleanerTimer.Enabled;
         }
 
         private void windowCleanerTimer_Tick(object sender, EventArgs e) {
-            Cleaner.CleanWindows();
+            ThreadPool.QueueUserWorkItem(x => {
+                WindowCleaner.CleanWindows();
+            });
         }
 
         // Firewall
@@ -80,6 +85,25 @@ namespace NJCloak {
             }
         }
 
+        private void firewallSelectButton_Click(object sender, EventArgs e) {
+            var result = openFileDialog1.ShowDialog();
+            if (result == DialogResult.OK &&
+               !String.IsNullOrEmpty(openFileDialog1.FileName)) {
+                whitelistAppPath.Text = openFileDialog1.FileName;
+            }
+        }
+
+        private void firewallTab_DragDrop(object sender, DragEventArgs e) {
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            if (files.Length > 0) {
+                whitelistAppPath.Text = files[0];
+            }
+        }
+
+        private void On_DragEnter(object sender, DragEventArgs e) {
+            e.Effect = DragDropEffects.Copy;
+        }
+
         private void whitelistRemoveButton_Click(object sender, EventArgs e) {
             Firewall.RemoveApp(whitelistAppPath.Text);
             firewallStatusLabel.Text = "Removed " + whitelistAppPath.Text;
@@ -94,23 +118,25 @@ namespace NJCloak {
                 clipperDetectorThread = new Thread(
                     new ThreadStart(delegate () {
                         while (true) {
-                            foreach (var address in wallets) {
-                                clipperStatusLabel.Invoke((MethodInvoker)delegate () {
-                                    clipperStatusLabel.Text = "Copied address " + address;
-                                });
-                                Clipboard.SetText(address);
-                                Thread.Sleep(3000);
-                                string currentAddr = Clipboard.GetText();
-                                if (currentAddr != address) {
+                            try {
+                                foreach (var address in wallets) {
                                     clipperStatusLabel.Invoke((MethodInvoker)delegate () {
-                                        clipperDetectorButton.Text = "Start clipper detector";
-                                        clipperStatusLabel.Text = string.Empty;
+                                        clipperStatusLabel.Text = "Copied address " + address;
                                     });
-                                    clipperDetectorEnabled = false;
-                                    MessageBox.Show("Copied address: " + currentAddr, "Crypto clipper detected!");
-                                    return;
+                                    Clipboard.SetText(address);
+                                    Thread.Sleep(3000);
+                                    string currentAddr = Clipboard.GetText();
+                                    if (currentAddr != address) {
+                                        clipperStatusLabel.Invoke((MethodInvoker)delegate () {
+                                            clipperDetectorButton.Text = "Start clipper detector";
+                                            clipperStatusLabel.Text = string.Empty;
+                                        });
+                                        clipperDetectorEnabled = false;
+                                        MessageBox.Show("Copied address: " + currentAddr, "Crypto clipper detected!");
+                                        return;
+                                    }
                                 }
-                            }
+                            } catch { }
                         }
                     }));
                 clipperDetectorThread.SetApartmentState(ApartmentState.STA);
@@ -124,12 +150,22 @@ namespace NJCloak {
             }
         }
 
-        private void firewallSelectButton_Click(object sender, EventArgs e) {
-            var result = openFileDialog1.ShowDialog();
-            if (result == DialogResult.OK &&
-               !String.IsNullOrEmpty(openFileDialog1.FileName)) {
-                whitelistAppPath.Text = openFileDialog1.FileName;
+        // About
+
+        private static void OpenBrowserSafe(string url) {
+            try {
+                Process.Start(url);
+            } catch (Exception e) {
+                Clipboard.Clear();
+                Clipboard.SetText(url);
+                MessageBox.Show("Your computer doesn't have a default browser selected. " +
+                                "The URL was copied to your clipboard instead.", "Warning",
+                                MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
+        }
+
+        private void creditsLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+            OpenBrowserSafe("https://github.com/ac3ss0r/NJCloak");
         }
     }
 }
