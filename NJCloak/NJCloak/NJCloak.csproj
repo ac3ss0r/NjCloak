@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{7BD5E2A1-2A59-48DF-8477-DE598AB66B27}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <RootNamespace>NJCloak</RootNamespace>
     <AssemblyName>NJCloak</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
@@ -52,6 +52,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Modules\ClipboardHelper.cs" />
     <Compile Include="Modules\WindowCleaner.cs" />
     <Compile Include="CloakForm.cs">
       <SubType>Form</SubType>
