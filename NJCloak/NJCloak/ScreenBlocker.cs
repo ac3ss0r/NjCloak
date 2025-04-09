@@ -3,8 +3,8 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace NJCloak {
-    public partial class CloakForm : Form {
-        public CloakForm() {
+    public partial class ScreenBlocker : Form {
+        public ScreenBlocker() {
             InitializeComponent();
         }
         [DllImport("user32.dll")]

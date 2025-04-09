@@ -6,9 +6,18 @@ Most modern antivirus softwares fail against complex malware and can be bypassed
 
 ## Features
 
-#### Screen blocker
-Allows to block your screen from capture by any apps. Any remote administration tool will fail to capture and control your screen. Has a feature to clean window titles, since they can contain sensitive information too.
+### Screen blocker
 
+Blocks your screen from being captured by any programs. From user perspective this is fully invisible and doesn't affect your system usage. Comes with two settings:
+
+- Block simulated inputs - blocks inputs (both mouse & keyboard) injected by software. This prevents malware from remotely controlling your PC.
+
+- Clean window titles - cleans all window titles since they can also contain sensitive information.
+
+<div align=center>
+    <img width="80%" src="images/screen_blocker_tab.png"><br/>
+</div>
+<br/>
 
 <div align=center>
     <img width="80%" src="images/screen_default.png"><br/>
@@ -22,20 +31,30 @@ Allows to block your screen from capture by any apps. Any remote administration 
 </div>
 <br/>
 
-#### Firewall
-Deny network access for all software except for whitelisted ones.
+### Firewall
+
+Deny network access for all programs except for whitelisted executables. If you run a malware that requires internet connection it will be completely helpless, since it won't be able to reach remote endpoints.
 
 <div align=center>
-    <img width="80%" src="images/firewall.png"><br/>
+    <img width="80%" src="images/firewall_tab.png"><br/>
 </div>
 <br/>
 
+### Periphery
 
-#### Clipper detector
-Helps to detect crypto clippers automatically by copying wallet addresses and checking if they changed.
+Allows to enable & disable your webcam and mic devices quickly.
 
 <div align=center>
-    <img width="80%" src="images/clipper_detector.png"><br/>
+    <img width="80%" src="images/periphery_tab.png"><br/>
+</div>
+<br/>
+
+### Clipper detector
+
+Helps to detect crypto clippers automatically by copying random wallet addresses and checking if they changed.
+
+<div align=center>
+    <img width="80%" src="images/clipper_detector_tab.png"><br/>
 </div>
 <br/>
 

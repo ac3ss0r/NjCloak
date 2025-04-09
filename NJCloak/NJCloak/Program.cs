@@ -1,11 +1,10 @@
-﻿using System;
+﻿using NJCloak.Modules;
+using System;
 using System.Windows.Forms;
 
 namespace NJCloak {
     static class Program {
-        /// <summary>
-        /// Главная точка входа для приложения.
-        /// </summary>
+      
         [STAThread]
         static void Main() {
             Application.EnableVisualStyles();
