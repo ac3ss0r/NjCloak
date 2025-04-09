@@ -1,6 +1,6 @@
 ﻿
 namespace NJCloak {
-    partial class CloakForm {
+    partial class ScreenBlocker {
         /// <summary>
         /// Required designer variable.
         /// </summary>

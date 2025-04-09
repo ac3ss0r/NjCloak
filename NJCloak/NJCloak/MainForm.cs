@@ -1,23 +1,18 @@
 ﻿using NJCloak.Modules;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Management;
 using System.Threading;
 using System.Windows.Forms;
 
 namespace NJCloak {
     public partial class MainForm : Form {
 
-        private CloakForm ScreenBlocker;
-        private static string[] wallets = {
-            "0xE92681C4d082175d2102f196503CA0E5aA3b1A17", // eth
-            "TCVCVfo1WYqEfYso9akqtyoFVBPqbXTWZE", // USDT TRC20
-            "bc1qjhw46crf2mm7d06g3wp2xhmenxwthey0yqmu4q", // BTC
-            "ltc1qlhrnsa5h8s58r8pvlmz0g7yve0j5g8thgt7nxv", // Litecoin
-            "UQBm0OsvEzXel2OLObYRF2x-wVJmdTT5wppHuoKhxmZ7IHzT" // Ton
-        };
-        private bool clipperDetectorEnabled = false;
+        private bool screenBlockerEnabled = false, clipperDetectorEnabled = false;
+        private List<ScreenBlocker> screenBlockers = new List<ScreenBlocker>();
         private Thread clipperDetectorThread;
         private Panel[] tabs;
 
@@ -27,19 +22,31 @@ namespace NJCloak {
                 screenBlockerTab,
                 firewallTab,
                 clipperDetectorTab,
-                aboutTab
+                aboutTab,
+                peripheryTab
             };
         }
 
         private void Form1_Load(object sender, EventArgs e) {
-            ScreenBlocker = new CloakForm();
+            ThreadPool.QueueUserWorkItem(x => {
+                List<ManagementObject> devices = Periphery.GetAllPeripherals();
+                peripheralsList.Invoke((MethodInvoker)delegate () {
+                    foreach (var device in devices) {
+                        peripheralsList.Items.Add((string)device.Properties["Name"].Value);
+                        peripheralsList.SetItemChecked(peripheralsList.Items.Count-1, 
+                                                       (string)device.Properties["Status"].Value == "OK");
+                    }
+                    this.peripheralsList.ItemCheck += new ItemCheckEventHandler(this.peripheralsList_ItemCheck);
+                });
+            });
         }
 
         // Custom table implementation
 
         private void SelectTab(string name) {
-            foreach (var tab in tabs)
-                if (tab.Name == name) tab.BringToFront();
+            foreach (var tab in tabs) {
+                tab.Visible = tab.Name == name;
+            }
         }
 
         private void onTabSelected(object sender, EventArgs e) {
@@ -49,10 +56,33 @@ namespace NJCloak {
         // Screen blocker
 
         private void cloakButton_Click(object sender, EventArgs e) {
-            cloakButton.Text = ScreenBlocker.Visible ? "Start blocking" : 
+            cloakButton.Text = screenBlockerEnabled ? "Start blocking" : 
                                                        "Stop blocking";
-            ScreenBlocker.Visible = !ScreenBlocker.Visible;
-            windowCleanerTimer.Enabled = !windowCleanerTimer.Enabled;
+            if (screenBlockerEnabled) {
+                LowLevelInputHooks.Disable();
+                windowCleanerTimer.Enabled = false;
+                foreach (var blocker in screenBlockers.ToArray()) {
+                    screenBlockers.Remove(blocker);
+                    blocker.Dispose();
+                }
+                screenBlockerEnabled = false;
+            } else {
+                if (cleanTitles.Checked) {
+                    windowCleanerTimer.Enabled = true;
+                }
+                if (blockInputs.Checked) {
+                    LowLevelInputHooks.Enable();
+                }
+                foreach (var scr in Screen.AllScreens) {
+                    var blocker = new ScreenBlocker();
+                    blocker.Location = scr.WorkingArea.Location;
+                    blocker.StartPosition = FormStartPosition.Manual;
+                    blocker.Size = new Size(scr.Bounds.Width - 1, scr.Bounds.Height);
+                    blocker.Show();
+                    screenBlockers.Add(blocker);
+                }
+                screenBlockerEnabled = true;
+            }
         }
 
         private void windowCleanerTimer_Tick(object sender, EventArgs e) {
@@ -121,7 +151,9 @@ namespace NJCloak {
                     new ThreadStart(delegate () {
                         while (true) {
                             try {
-                                foreach (var address in wallets) {
+                                foreach (var walletType in new string[] { "ETH", "TRC20", "BTC", "LTC", "TON" }) {
+
+                                    var address = WalletGenerator.GenerateRandomAddress(walletType);
 
                                     clipperStatusLabel.Invoke((MethodInvoker)delegate () {
                                         clipperStatusLabel.Text = "Copied address " + address;
@@ -169,6 +201,45 @@ namespace NJCloak {
                                 "The URL was copied to your clipboard instead.", "Warning",
                                 MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
+        }
+
+        private void peripheralsList_ItemCheck(object sender, ItemCheckEventArgs e) {
+            ThreadPool.QueueUserWorkItem(x => {
+                var device = Periphery.FindDevice((string)peripheralsList.Items[e.Index]);
+                if (device != null) {
+                    var method = e.NewValue == CheckState.Checked ? "Enable" : "Disable";
+                    ManagementBaseObject inParams = device.GetMethodParameters(method);
+                    device.InvokeMethod(method, inParams, null);
+                }
+            });
+        }
+
+        private void disableAll_Click(object sender, EventArgs e) {
+            ThreadPool.QueueUserWorkItem(x => {
+                for (int i =0; i < peripheralsList.Items.Count; i++) {
+                    var item = peripheralsList.Items[i];
+                    var device = Periphery.FindDevice((string)item);
+                    if (device != null) {
+                        ManagementBaseObject inParams = device.GetMethodParameters("Disable");
+                        device.InvokeMethod("Disable", inParams, null);
+                        peripheralsList.Invoke((MethodInvoker)delegate () { peripheralsList.SetItemChecked(i, false); });
+                    }
+                }
+            });
+        }
+
+        private void enableAll_Click(object sender, EventArgs e) {
+            ThreadPool.QueueUserWorkItem(x => {
+                for (int i = 0; i < peripheralsList.Items.Count; i++) {
+                    var item = peripheralsList.Items[i];
+                    var device = Periphery.FindDevice((string)item);
+                    if (device != null) {
+                        ManagementBaseObject inParams = device.GetMethodParameters("Enable");
+                        device.InvokeMethod("Enable", inParams, null);
+                        peripheralsList.Invoke((MethodInvoker)delegate () { peripheralsList.SetItemChecked(i, true); });
+                    }
+                }
+            });
         }
 
         private void creditsLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
