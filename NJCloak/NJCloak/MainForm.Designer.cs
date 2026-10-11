@@ -32,11 +32,18 @@ namespace NJCloak {
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.AboutLbl = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel4 = new System.Windows.Forms.ToolStripStatusLabel();
             this.label1 = new System.Windows.Forms.Label();
             this.blockInputs = new System.Windows.Forms.CheckBox();
             this.cleanTitles = new System.Windows.Forms.CheckBox();
             this.firewallTab = new System.Windows.Forms.Panel();
+            this.firewallRulesList = new System.Windows.Forms.ListView();
+            this.colApp = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.colAccess = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.colState = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.colPath = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.firewallRefreshButton = new System.Windows.Forms.Button();
+            this.firewallBlockButton = new System.Windows.Forms.Button();
             this.firewallSelectButton = new System.Windows.Forms.Button();
             this.firewallStatusLabel = new System.Windows.Forms.Label();
             this.blockAllButton = new System.Windows.Forms.Button();
@@ -58,12 +65,18 @@ namespace NJCloak {
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.windowCleanerTimer = new System.Windows.Forms.Timer(this.components);
+            this.blockerGuardTimer = new System.Windows.Forms.Timer(this.components);
             this.peripheryTab = new System.Windows.Forms.Panel();
+            this.peripheryStatusLabel = new System.Windows.Forms.Label();
+            this.refreshDevices = new System.Windows.Forms.Button();
             this.peripheralsList = new System.Windows.Forms.CheckedListBox();
             this.label7 = new System.Windows.Forms.Label();
             this.enableAll = new System.Windows.Forms.Button();
             this.disableAll = new System.Windows.Forms.Button();
             this.screenBlockerTab = new System.Windows.Forms.Panel();
+            this.trayIcon = new System.Windows.Forms.NotifyIcon(this.components);
+            this.toolStripStatusLabel5 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel6 = new System.Windows.Forms.ToolStripStatusLabel();
             this.BottomMenu.SuspendLayout();
             this.firewallTab.SuspendLayout();
             this.clipperDetectorTab.SuspendLayout();
@@ -95,7 +108,9 @@ namespace NJCloak {
             this.toolStripStatusLabel1,
             this.toolStripStatusLabel2,
             this.toolStripStatusLabel3,
-            this.AboutLbl});
+            this.toolStripStatusLabel5,
+            this.toolStripStatusLabel6,
+            this.toolStripStatusLabel4});
             this.BottomMenu.Location = new System.Drawing.Point(0, 220);
             this.BottomMenu.Name = "BottomMenu";
             this.BottomMenu.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
@@ -159,19 +174,19 @@ namespace NJCloak {
             this.toolStripStatusLabel3.Text = "[Anti-clipper]";
             this.toolStripStatusLabel3.Click += new System.EventHandler(this.onTabSelected);
             // 
-            // AboutLbl
+            // toolStripStatusLabel4
             // 
-            this.AboutLbl.ActiveLinkColor = System.Drawing.Color.LightGray;
-            this.AboutLbl.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.AboutLbl.ForeColor = System.Drawing.Color.LightGray;
-            this.AboutLbl.IsLink = true;
-            this.AboutLbl.LinkBehavior = System.Windows.Forms.LinkBehavior.AlwaysUnderline;
-            this.AboutLbl.LinkColor = System.Drawing.Color.LightGray;
-            this.AboutLbl.Name = "AboutLbl";
-            this.AboutLbl.Size = new System.Drawing.Size(48, 17);
-            this.AboutLbl.Tag = "aboutTab";
-            this.AboutLbl.Text = "[About]";
-            this.AboutLbl.Click += new System.EventHandler(this.onTabSelected);
+            this.toolStripStatusLabel4.ActiveLinkColor = System.Drawing.Color.LightGray;
+            this.toolStripStatusLabel4.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.toolStripStatusLabel4.ForeColor = System.Drawing.Color.Blue;
+            this.toolStripStatusLabel4.IsLink = true;
+            this.toolStripStatusLabel4.LinkBehavior = System.Windows.Forms.LinkBehavior.AlwaysUnderline;
+            this.toolStripStatusLabel4.LinkColor = System.Drawing.Color.Blue;
+            this.toolStripStatusLabel4.Name = "toolStripStatusLabel4";
+            this.toolStripStatusLabel4.Size = new System.Drawing.Size(79, 17);
+            this.toolStripStatusLabel4.Tag = "";
+            this.toolStripStatusLabel4.Text = "[Hide to tray]";
+            this.toolStripStatusLabel4.Click += new System.EventHandler(this.hideToTrayButton_Click);
             // 
             // label1
             // 
@@ -210,6 +225,9 @@ namespace NJCloak {
             // firewallTab
             // 
             this.firewallTab.AllowDrop = true;
+            this.firewallTab.Controls.Add(this.firewallRulesList);
+            this.firewallTab.Controls.Add(this.firewallRefreshButton);
+            this.firewallTab.Controls.Add(this.firewallBlockButton);
             this.firewallTab.Controls.Add(this.firewallSelectButton);
             this.firewallTab.Controls.Add(this.firewallStatusLabel);
             this.firewallTab.Controls.Add(this.blockAllButton);
@@ -226,15 +244,78 @@ namespace NJCloak {
             this.firewallTab.DragDrop += new System.Windows.Forms.DragEventHandler(this.firewallTab_DragDrop);
             this.firewallTab.DragEnter += new System.Windows.Forms.DragEventHandler(this.On_DragEnter);
             // 
+            // firewallRulesList
+            // 
+            this.firewallRulesList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.firewallRulesList.BackColor = System.Drawing.Color.Black;
+            this.firewallRulesList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.colApp,
+            this.colAccess,
+            this.colState,
+            this.colPath});
+            this.firewallRulesList.FullRowSelect = true;
+            this.firewallRulesList.HideSelection = false;
+            this.firewallRulesList.Location = new System.Drawing.Point(12, 70);
+            this.firewallRulesList.MultiSelect = false;
+            this.firewallRulesList.Name = "firewallRulesList";
+            this.firewallRulesList.Size = new System.Drawing.Size(573, 121);
+            this.firewallRulesList.TabIndex = 17;
+            this.firewallRulesList.UseCompatibleStateImageBehavior = false;
+            this.firewallRulesList.View = System.Windows.Forms.View.Details;
+            this.firewallRulesList.SelectedIndexChanged += new System.EventHandler(this.firewallRulesList_SelectedIndexChanged);
+            // 
+            // colApp
+            // 
+            this.colApp.Text = "Application";
+            this.colApp.Width = 140;
+            // 
+            // colAccess
+            // 
+            this.colAccess.Text = "Access";
+            // 
+            // colState
+            // 
+            this.colState.Text = "State";
+            this.colState.Width = 70;
+            // 
+            // colPath
+            // 
+            this.colPath.Text = "Path";
+            this.colPath.Width = 290;
+            // 
+            // firewallRefreshButton
+            // 
+            this.firewallRefreshButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.firewallRefreshButton.Location = new System.Drawing.Point(230, 40);
+            this.firewallRefreshButton.Name = "firewallRefreshButton";
+            this.firewallRefreshButton.Size = new System.Drawing.Size(70, 24);
+            this.firewallRefreshButton.TabIndex = 16;
+            this.firewallRefreshButton.Text = "Refresh";
+            this.firewallRefreshButton.UseVisualStyleBackColor = true;
+            this.firewallRefreshButton.Click += new System.EventHandler(this.firewallRefreshButton_Click);
+            // 
+            // firewallBlockButton
+            // 
+            this.firewallBlockButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.firewallBlockButton.Location = new System.Drawing.Point(78, 40);
+            this.firewallBlockButton.Name = "firewallBlockButton";
+            this.firewallBlockButton.Size = new System.Drawing.Size(60, 24);
+            this.firewallBlockButton.TabIndex = 15;
+            this.firewallBlockButton.Text = "Block";
+            this.firewallBlockButton.UseVisualStyleBackColor = true;
+            this.firewallBlockButton.Click += new System.EventHandler(this.firewallBlockButton_Click);
+            // 
             // firewallSelectButton
             // 
-            this.firewallSelectButton.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.firewallSelectButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.firewallSelectButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.firewallSelectButton.Location = new System.Drawing.Point(531, 81);
+            this.firewallSelectButton.Location = new System.Drawing.Point(500, 11);
             this.firewallSelectButton.Name = "firewallSelectButton";
-            this.firewallSelectButton.Size = new System.Drawing.Size(61, 23);
+            this.firewallSelectButton.Size = new System.Drawing.Size(85, 23);
             this.firewallSelectButton.TabIndex = 14;
-            this.firewallSelectButton.Text = "Select";
+            this.firewallSelectButton.Text = "Browse...";
             this.firewallSelectButton.UseVisualStyleBackColor = true;
             this.firewallSelectButton.Click += new System.EventHandler(this.firewallSelectButton_Click);
             this.firewallSelectButton.DragDrop += new System.Windows.Forms.DragEventHandler(this.firewallTab_DragDrop);
@@ -242,11 +323,12 @@ namespace NJCloak {
             // 
             // firewallStatusLabel
             // 
-            this.firewallStatusLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.firewallStatusLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.firewallStatusLabel.BackColor = System.Drawing.Color.Black;
-            this.firewallStatusLabel.Location = new System.Drawing.Point(18, 147);
+            this.firewallStatusLabel.Location = new System.Drawing.Point(12, 197);
             this.firewallStatusLabel.Name = "firewallStatusLabel";
-            this.firewallStatusLabel.Size = new System.Drawing.Size(574, 14);
+            this.firewallStatusLabel.Size = new System.Drawing.Size(573, 15);
             this.firewallStatusLabel.TabIndex = 13;
             this.firewallStatusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.firewallStatusLabel.DragDrop += new System.Windows.Forms.DragEventHandler(this.firewallTab_DragDrop);
@@ -254,13 +336,13 @@ namespace NJCloak {
             // 
             // blockAllButton
             // 
-            this.blockAllButton.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.blockAllButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.blockAllButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.blockAllButton.Location = new System.Drawing.Point(235, 112);
+            this.blockAllButton.Location = new System.Drawing.Point(394, 40);
             this.blockAllButton.Name = "blockAllButton";
-            this.blockAllButton.Size = new System.Drawing.Size(76, 23);
+            this.blockAllButton.Size = new System.Drawing.Size(99, 24);
             this.blockAllButton.TabIndex = 12;
-            this.blockAllButton.Text = "Block all (whitelist)";
+            this.blockAllButton.Text = "Enable whitelist mode";
             this.blockAllButton.UseVisualStyleBackColor = true;
             this.blockAllButton.Click += new System.EventHandler(this.blockAllButton_Click);
             this.blockAllButton.DragDrop += new System.Windows.Forms.DragEventHandler(this.firewallTab_DragDrop);
@@ -268,11 +350,11 @@ namespace NJCloak {
             // 
             // resetFirewall
             // 
-            this.resetFirewall.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.resetFirewall.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.resetFirewall.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.resetFirewall.Location = new System.Drawing.Point(134, 112);
+            this.resetFirewall.Location = new System.Drawing.Point(499, 40);
             this.resetFirewall.Name = "resetFirewall";
-            this.resetFirewall.Size = new System.Drawing.Size(95, 23);
+            this.resetFirewall.Size = new System.Drawing.Size(86, 24);
             this.resetFirewall.TabIndex = 11;
             this.resetFirewall.Text = "Reset firewall";
             this.resetFirewall.UseVisualStyleBackColor = true;
@@ -282,11 +364,10 @@ namespace NJCloak {
             // 
             // whitelistRemoveButton
             // 
-            this.whitelistRemoveButton.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.whitelistRemoveButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.whitelistRemoveButton.Location = new System.Drawing.Point(396, 112);
+            this.whitelistRemoveButton.Location = new System.Drawing.Point(144, 40);
             this.whitelistRemoveButton.Name = "whitelistRemoveButton";
-            this.whitelistRemoveButton.Size = new System.Drawing.Size(73, 23);
+            this.whitelistRemoveButton.Size = new System.Drawing.Size(80, 24);
             this.whitelistRemoveButton.TabIndex = 10;
             this.whitelistRemoveButton.Text = "Remove";
             this.whitelistRemoveButton.UseVisualStyleBackColor = true;
@@ -296,13 +377,12 @@ namespace NJCloak {
             // 
             // whitelistAddButton
             // 
-            this.whitelistAddButton.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.whitelistAddButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.whitelistAddButton.Location = new System.Drawing.Point(317, 112);
+            this.whitelistAddButton.Location = new System.Drawing.Point(12, 40);
             this.whitelistAddButton.Name = "whitelistAddButton";
-            this.whitelistAddButton.Size = new System.Drawing.Size(73, 23);
+            this.whitelistAddButton.Size = new System.Drawing.Size(60, 24);
             this.whitelistAddButton.TabIndex = 9;
-            this.whitelistAddButton.Text = "Add";
+            this.whitelistAddButton.Text = "Allow";
             this.whitelistAddButton.UseVisualStyleBackColor = true;
             this.whitelistAddButton.Click += new System.EventHandler(this.whitelistAddButton_Click);
             this.whitelistAddButton.DragDrop += new System.Windows.Forms.DragEventHandler(this.firewallTab_DragDrop);
@@ -310,26 +390,26 @@ namespace NJCloak {
             // 
             // whitelistAppPath
             // 
-            this.whitelistAppPath.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.whitelistAppPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.whitelistAppPath.BackColor = System.Drawing.Color.Black;
             this.whitelistAppPath.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.whitelistAppPath.ForeColor = System.Drawing.Color.LightGray;
-            this.whitelistAppPath.Location = new System.Drawing.Point(97, 83);
+            this.whitelistAppPath.Location = new System.Drawing.Point(78, 12);
             this.whitelistAppPath.Name = "whitelistAppPath";
-            this.whitelistAppPath.Size = new System.Drawing.Size(423, 21);
+            this.whitelistAppPath.Size = new System.Drawing.Size(415, 21);
             this.whitelistAppPath.TabIndex = 8;
             this.whitelistAppPath.DragDrop += new System.Windows.Forms.DragEventHandler(this.firewallTab_DragDrop);
             this.whitelistAppPath.DragEnter += new System.Windows.Forms.DragEventHandler(this.On_DragEnter);
             // 
             // label2
             // 
-            this.label2.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(10, 85);
+            this.label2.Location = new System.Drawing.Point(12, 15);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(81, 15);
+            this.label2.Size = new System.Drawing.Size(57, 15);
             this.label2.TabIndex = 6;
-            this.label2.Text = "Whitelist app";
+            this.label2.Text = "App path";
             this.label2.DragDrop += new System.Windows.Forms.DragEventHandler(this.firewallTab_DragDrop);
             this.label2.DragEnter += new System.Windows.Forms.DragEventHandler(this.On_DragEnter);
             // 
@@ -461,9 +541,16 @@ namespace NJCloak {
             // 
             this.windowCleanerTimer.Interval = 500;
             this.windowCleanerTimer.Tick += new System.EventHandler(this.windowCleanerTimer_Tick);
-            // 
+            //
+            // blockerGuardTimer
+            //
+            this.blockerGuardTimer.Interval = 500;
+            this.blockerGuardTimer.Tick += new System.EventHandler(this.blockerGuardTimer_Tick);
+            //
             // peripheryTab
-            // 
+            //
+            this.peripheryTab.Controls.Add(this.peripheryStatusLabel);
+            this.peripheryTab.Controls.Add(this.refreshDevices);
             this.peripheryTab.Controls.Add(this.peripheralsList);
             this.peripheryTab.Controls.Add(this.label7);
             this.peripheryTab.Controls.Add(this.enableAll);
@@ -473,6 +560,30 @@ namespace NJCloak {
             this.peripheryTab.Name = "peripheryTab";
             this.peripheryTab.Size = new System.Drawing.Size(601, 242);
             this.peripheryTab.TabIndex = 9;
+            // 
+            // peripheryStatusLabel
+            // 
+            this.peripheryStatusLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.peripheryStatusLabel.ForeColor = System.Drawing.Color.LightGray;
+            this.peripheryStatusLabel.Location = new System.Drawing.Point(15, 199);
+            this.peripheryStatusLabel.Name = "peripheryStatusLabel";
+            this.peripheryStatusLabel.Size = new System.Drawing.Size(572, 15);
+            this.peripheryStatusLabel.TabIndex = 9;
+            this.peripheryStatusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // refreshDevices
+            // 
+            this.refreshDevices.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.refreshDevices.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.refreshDevices.ForeColor = System.Drawing.Color.LightGray;
+            this.refreshDevices.Location = new System.Drawing.Point(345, 36);
+            this.refreshDevices.Name = "refreshDevices";
+            this.refreshDevices.Size = new System.Drawing.Size(80, 25);
+            this.refreshDevices.TabIndex = 8;
+            this.refreshDevices.Text = "Refresh";
+            this.refreshDevices.UseVisualStyleBackColor = true;
+            this.refreshDevices.Click += new System.EventHandler(this.refreshDevices_Click);
             // 
             // peripheralsList
             // 
@@ -484,8 +595,9 @@ namespace NJCloak {
             this.peripheralsList.FormattingEnabled = true;
             this.peripheralsList.Location = new System.Drawing.Point(15, 69);
             this.peripheralsList.Name = "peripheralsList";
-            this.peripheralsList.Size = new System.Drawing.Size(572, 132);
+            this.peripheralsList.Size = new System.Drawing.Size(572, 116);
             this.peripheralsList.TabIndex = 7;
+            this.peripheralsList.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.peripheralsList_ItemCheck);
             // 
             // label7
             // 
@@ -504,7 +616,7 @@ namespace NJCloak {
             this.enableAll.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.enableAll.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.enableAll.ForeColor = System.Drawing.Color.LightGray;
-            this.enableAll.Location = new System.Drawing.Point(296, 36);
+            this.enableAll.Location = new System.Drawing.Point(252, 36);
             this.enableAll.Name = "enableAll";
             this.enableAll.Size = new System.Drawing.Size(87, 25);
             this.enableAll.TabIndex = 3;
@@ -517,7 +629,7 @@ namespace NJCloak {
             this.disableAll.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.disableAll.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.disableAll.ForeColor = System.Drawing.Color.LightGray;
-            this.disableAll.Location = new System.Drawing.Point(197, 36);
+            this.disableAll.Location = new System.Drawing.Point(153, 36);
             this.disableAll.Name = "disableAll";
             this.disableAll.Size = new System.Drawing.Size(93, 25);
             this.disableAll.TabIndex = 2;
@@ -537,6 +649,31 @@ namespace NJCloak {
             this.screenBlockerTab.Size = new System.Drawing.Size(601, 242);
             this.screenBlockerTab.TabIndex = 10;
             // 
+            // trayIcon
+            // 
+            this.trayIcon.Text = "NJCloak";
+            this.trayIcon.Click += new System.EventHandler(this.trayIcon_DoubleClick);
+            // 
+            // toolStripStatusLabel5
+            // 
+            this.toolStripStatusLabel5.ActiveLinkColor = System.Drawing.Color.LightGray;
+            this.toolStripStatusLabel5.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.toolStripStatusLabel5.ForeColor = System.Drawing.Color.LightGray;
+            this.toolStripStatusLabel5.IsLink = true;
+            this.toolStripStatusLabel5.LinkBehavior = System.Windows.Forms.LinkBehavior.AlwaysUnderline;
+            this.toolStripStatusLabel5.LinkColor = System.Drawing.Color.LightGray;
+            this.toolStripStatusLabel5.Name = "toolStripStatusLabel5";
+            this.toolStripStatusLabel5.Size = new System.Drawing.Size(48, 17);
+            this.toolStripStatusLabel5.Tag = "aboutTab";
+            this.toolStripStatusLabel5.Text = "[About]";
+            this.toolStripStatusLabel5.Click += new System.EventHandler(this.onTabSelected);
+            // 
+            // toolStripStatusLabel6
+            // 
+            this.toolStripStatusLabel6.Name = "toolStripStatusLabel6";
+            this.toolStripStatusLabel6.Size = new System.Drawing.Size(117, 17);
+            this.toolStripStatusLabel6.Spring = true;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -554,6 +691,7 @@ namespace NJCloak {
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MainForm";
             this.Text = "NJCloak";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.BottomMenu.ResumeLayout(false);
             this.BottomMenu.PerformLayout();
@@ -574,7 +712,6 @@ namespace NJCloak {
         private System.Windows.Forms.Button cloakButton;
         private System.Windows.Forms.StatusStrip BottomMenu;
         private System.Windows.Forms.ToolStripStatusLabel LogsLbl;
-        private System.Windows.Forms.ToolStripStatusLabel AboutLbl;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel3;
@@ -601,6 +738,7 @@ namespace NJCloak {
         private System.Windows.Forms.Button firewallSelectButton;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.Timer windowCleanerTimer;
+        private System.Windows.Forms.Timer blockerGuardTimer;
         private System.Windows.Forms.CheckBox blockInputs;
         private System.Windows.Forms.Panel peripheryTab;
         private System.Windows.Forms.Button enableAll;
@@ -609,6 +747,19 @@ namespace NJCloak {
         private System.Windows.Forms.CheckedListBox peripheralsList;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.Panel screenBlockerTab;
+        private System.Windows.Forms.Button firewallBlockButton;
+        private System.Windows.Forms.Button firewallRefreshButton;
+        private System.Windows.Forms.ListView firewallRulesList;
+        private System.Windows.Forms.ColumnHeader colApp;
+        private System.Windows.Forms.ColumnHeader colAccess;
+        private System.Windows.Forms.ColumnHeader colState;
+        private System.Windows.Forms.ColumnHeader colPath;
+        private System.Windows.Forms.Button refreshDevices;
+        private System.Windows.Forms.Label peripheryStatusLabel;
+        private System.Windows.Forms.NotifyIcon trayIcon;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel4;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel5;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel6;
     }
 }
 
